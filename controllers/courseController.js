@@ -209,10 +209,48 @@ async function getSingleCourseController(req, res) {
   }
 }
 
+async function getPopularCoursesController(req, res) {
+  try {
+    // Option 1: Manual flag
+    // const popularCourses = await CourseModel.find({ isPopular: true })
+
+    // Option 2: Based on enrollments (>= 100 for example)
+    const popularCourses = await CourseModel.find({
+      $or: [
+        { isPopular: true },
+        { enrollments: { $gte: 100 } } // adjust threshold
+      ]
+    })
+      .populate("instructor", "username email")
+      .populate("category", "name description");
+
+    if (!popularCourses || popularCourses.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No popular courses found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Popular courses fetched successfully",
+      data: popularCourses,
+    });
+  } catch (error) {
+    console.error("Error fetching popular courses:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Could not fetch popular courses.",
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   addCourseController,
   deleteCourseController,
   updateCourseController,
   getAllCoursesController,
   getSingleCourseController,
+  getPopularCoursesController
 };

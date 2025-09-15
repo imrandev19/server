@@ -22,6 +22,15 @@ const courseSchema = new Schema(
       min: [0, "Price cannot be negative"],
       default: 0,
     },
+    // ✅ Popularity fields
+    isPopular: {
+      type: Boolean,
+      default: false, // manual flag
+    },
+    enrollments: {
+      type: Number,
+      default: 0, // can auto-increment when a student enrolls
+    },
 
     // Instructor can be a user reference
     instructor: {

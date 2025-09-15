@@ -5,6 +5,7 @@ const {
   updateCourseController,
   getAllCoursesController,
   getSingleCourseController,
+  getPopularCoursesController
 } = require("../controllers/courseController");
 const upload = require("../middleware/upload");
 
@@ -24,5 +25,8 @@ router.get("/all-courses", getAllCoursesController);
 
 // Get single course by ID
 router.get("/course/:id", getSingleCourseController);
+
+// Get all popular courses
+router.get("/popular-courses", getPopularCoursesController);
 
 module.exports = router;
