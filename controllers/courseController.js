@@ -90,6 +90,14 @@ async function updateCourseController(req, res) {
     const { id } = req.params;
     const { title, description, price, instructor, category } = req.body;
 
+    // Validate required fields (PUT requires all main fields)
+    if (!title || !description || !price || !instructor || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required for full update (PUT)",
+      });
+    }
+
     const course = await CourseModel.findById(id);
     if (!course) {
       return res.status(404).json({
@@ -98,14 +106,7 @@ async function updateCourseController(req, res) {
       });
     }
 
-    // Update only provided fields
-    if (title) course.title = title.trim();
-    if (description) course.description = description;
-    if (price) course.price = price;
-    if (instructor) course.instructor = instructor;
-    if (category) course.category = category;
-
-    // Handle thumbnail update
+    // ✅ If new thumbnail uploaded → delete old one
     if (req.file) {
       if (course.thumbnailImage) {
         const oldFileName = course.thumbnailImage.split("/").pop();
@@ -119,15 +120,23 @@ async function updateCourseController(req, res) {
           }
         });
       }
-
-      course.thumbnailImage = `${process.env.SERVER}/${req.file.filename}`;
     }
+
+    // ✅ Replace all fields (full update)
+    course.title = title.trim();
+    course.description = description;
+    course.price = price;
+    course.instructor = instructor;
+    course.category = category;
+    course.thumbnailImage = req.file
+      ? `${process.env.SERVER}/${req.file.filename}`
+      : course.thumbnailImage; // keep old image if not replaced
 
     await course.save();
 
     res.status(200).json({
       success: true,
-      message: "Course updated successfully",
+      message: "Course updated successfully (PUT)",
       data: course,
     });
   } catch (error) {
@@ -140,8 +149,70 @@ async function updateCourseController(req, res) {
   }
 }
 
+// ✅ Get All Courses
+async function getAllCoursesController(req, res) {
+  try {
+    const courses = await CourseModel.find({})
+      .populate("instructor", "username email") // only selected fields from User
+      .populate("category", "name description"); // only selected fields from Category
+
+    if (!courses || courses.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No courses found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Courses fetched successfully",
+      data: courses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Could not fetch courses.",
+      error: error.message,
+    });
+  }
+}
+
+// ✅ Get Single Course
+async function getSingleCourseController(req, res) {
+  try {
+    const { id } = req.params;
+
+    const course = await CourseModel.findById(id)
+      .populate("instructor", "username email")
+      .populate("category", "name description");
+
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Course fetched successfully",
+      data: course,
+    });
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Could not fetch course.",
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
   addCourseController,
   deleteCourseController,
   updateCourseController,
+  getAllCoursesController,
+  getSingleCourseController,
 };

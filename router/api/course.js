@@ -3,6 +3,8 @@ const {
   addCourseController,
   deleteCourseController,
   updateCourseController,
+  getAllCoursesController,
+  getSingleCourseController,
 } = require("../controllers/courseController");
 const upload = require("../middleware/upload");
 
@@ -15,6 +17,12 @@ router.post("/add-course", upload.single("thumbnailImage"), addCourseController)
 router.delete("/delete-course/:id", deleteCourseController);
 
 // Update course (PATCH, optional new thumbnail)
-router.patch("/update-course/:id", upload.single("thumbnailImage"), updateCourseController);
+router.put("/update-course/:id", upload.single("thumbnailImage"), updateCourseController);
+
+// Get all courses
+router.get("/all-courses", getAllCoursesController);
+
+// Get single course by ID
+router.get("/course/:id", getSingleCourseController);
 
 module.exports = router;
