@@ -259,11 +259,38 @@ async function getPopularCoursesController(req, res) {
   }
 }
 
+const getCoursesByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    const courses = await CourseModel.find({ category: categoryId });
+
+    if (!courses || courses.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No courses found for this category",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: courses,
+    });
+  } catch (err) {
+    console.error("Error fetching courses by category:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   addCourseController,
   deleteCourseController,
   updateCourseController,
   getAllCoursesController,
   getSingleCourseController,
-  getPopularCoursesController
+  getPopularCoursesController,
+  getPopularCoursesController,
+  getCoursesByCategory
 };

@@ -5,7 +5,8 @@ const {
   updateCourseController,
   getAllCoursesController,
   getSingleCourseController,
-  getPopularCoursesController
+  getPopularCoursesController,
+  getCoursesByCategory
 } = require("../../controllers/courseController");
 const upload = require("../../helpers/imageUpload");
 const adminAccess = require("../../middleware/adminMiddleware");
@@ -29,5 +30,9 @@ router.get("/course/:id", getSingleCourseController);
 
 // Get all popular courses
 router.get("/popular-courses", getPopularCoursesController);
+
+// GET /api/courses/category/:categoryId
+router.get("/category/:categoryId", getCoursesByCategory);
+
 
 module.exports = router;
