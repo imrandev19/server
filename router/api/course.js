@@ -8,17 +8,18 @@ const {
   getPopularCoursesController
 } = require("../controllers/courseController");
 const upload = require("../middleware/upload");
+const adminAccess = require("../../middleware/adminMiddleware");
 
 const router = express.Router();
 
 // Add course (with thumbnail upload)
-router.post("/add-course", upload.single("thumbnailImage"), addCourseController);
+router.post("/add-course", adminAccess, upload.single("thumbnailImage"), addCourseController);
 
 // Delete course
-router.delete("/delete-course/:id", deleteCourseController);
+router.delete("/delete-course/:id", adminAccess, deleteCourseController);
 
 // Update course (PATCH, optional new thumbnail)
-router.put("/update-course/:id", upload.single("thumbnailImage"), updateCourseController);
+router.put("/update-course/:id", adminAccess, upload.single("thumbnailImage"), updateCourseController);
 
 // Get all courses
 router.get("/all-courses", getAllCoursesController);

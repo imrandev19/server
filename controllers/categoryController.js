@@ -166,5 +166,33 @@ async function updateCategoryController(req, res) {
     });
   }
 }
+// ✅ Get All Categories
+async function getAllCategoriesController(req, res) {
+  try {
+    const categories = await CategoryModel.find({})
+      .populate("parentCategory", "name") // optional populate for nested categories
+      .sort({ createdAt: -1 });
 
-module.exports = { addCategoryController, deleteCategoryController, updateCategoryController };
+    if (!categories || categories.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No categories found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Categories fetched successfully",
+      data: categories,
+    });
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error. Could not fetch categories.",
+      error: error.message,
+    });
+  }
+}
+
+module.exports = { addCategoryController, deleteCategoryController, updateCategoryController, getAllCategoriesController };
