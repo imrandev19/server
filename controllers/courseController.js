@@ -1,12 +1,20 @@
 const CourseModel = require("../models/courseModel");
 const fs = require("fs");
 const path = require("path");
-
+const slugify = require('slugify')
 // ✅ Add Course
 async function addCourseController(req, res) {
   try {
-    const { title, description, price, instructor, category } = req.body;
-
+    const { title,duration,
+      lectures,
+      projects, description, price, instructor, category } = req.body;
+    const {thumbnailImage} = req.file
+        const slug = slugify(title, {
+          replacement: '-',  
+          remove: undefined, 
+          lower: true,  
+          trim: true        
+        })
     if (!title || !description || !price || !instructor || !category) {
       return res.status(400).json({
         success: false,
@@ -20,6 +28,9 @@ async function addCourseController(req, res) {
       price,
       instructor,
       category,
+      duration,
+      lectures,
+      projects,
       thumbnailImage: req.file ? `${process.env.SERVER}/${req.file.filename}` : null,
     });
 
@@ -88,7 +99,9 @@ async function deleteCourseController(req, res) {
 async function updateCourseController(req, res) {
   try {
     const { id } = req.params;
-    const { title, description, price, instructor, category } = req.body;
+    const { title, description, price, instructor, category, duration,
+      lectures,
+      projects, } = req.body;
 
     // Validate required fields (PUT requires all main fields)
     if (!title || !description || !price || !instructor || !category) {

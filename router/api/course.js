@@ -6,8 +6,8 @@ const {
   getAllCoursesController,
   getSingleCourseController,
   getPopularCoursesController
-} = require("../controllers/courseController");
-const upload = require("../middleware/upload");
+} = require("../../controllers/courseController");
+const upload = require("../../helpers/imageUpload");
 const adminAccess = require("../../middleware/adminMiddleware");
 
 const router = express.Router();

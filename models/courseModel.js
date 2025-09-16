@@ -57,7 +57,20 @@ const courseSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    slug:{
+      type:String
+    },
+    duration:{
+    type:String
   },
+  lectures:{
+    type:String
+  },
+  projects:{
+    type:String
+  } 
+  },
+  
   {
     timestamps: true,
   }
