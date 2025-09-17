@@ -1,10 +1,16 @@
 const SuccessStoryModel = require("../models/successStoryModel");
-
+const slugify = require('slugify')
 // ✅ Add New Success Story
 async function addSuccessStoryController(req, res) {
   try {
     const { studentName, storyText, courseName, course } = req.body;
-
+const {thumbnailImage} = req.file
+const slug = slugify(studentName+courseName, {
+      replacement: '-',  
+      remove: undefined, 
+      lower: true,  
+      trim: true        
+    })
     if (!studentName || !storyText || !courseName) {
       return res.status(400).json({
         success: false,
@@ -17,6 +23,8 @@ async function addSuccessStoryController(req, res) {
       storyText: storyText.trim(),
       courseName: courseName.trim(),
       course: course || null,
+      thumbnailImage:`${process.env.SERVER}/${req.file.filename}`,
+      slug
     });
 
     await newStory.save();

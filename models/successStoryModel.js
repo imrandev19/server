@@ -30,6 +30,12 @@ const successStorySchema = new Schema(
       ref: "Course",
       default: null,
     },
+    thumbnailImage:{
+      type:String
+    },
+    slug:{
+      trye:String
+    }
   },
   {
     timestamps: true,
